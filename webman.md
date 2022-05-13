@@ -22,6 +22,24 @@ webman是一款高性能HTTP框架，是对workerman的一层业务封装，让�
 配置文件在 config/plugin/webman/gateway-worker/目录
 业务目录在 plugin/webman/gateway 目录
 
+4、在webman控制器给长链接发消息
+```php
+ use GatewayClient\Gateway;
+
+  public function wss(Request $request)
+  {
+      //$registerAddress 在config/plugin/webman/gateway-worker/process.php 里面可设置ip和端口 默认不动
+      Gateway::$registerAddress = '0.0.0.0:1236';
+      $user_id =$request->get('user_id'); //user_id已于client_id绑定。
+      if (Gateway::isUidOnline($user_id)) {
+          Gateway::sendToUid($user_id, 'user_message');
+          
+          return response('在线');
+      } else {
+          return response('离线');
+      }
+  }
+```
 ## 启动停止
 命令与workerman用法相同
 `php start.php start` 或 `php start.php start -d`
